@@ -1,0 +1,11 @@
+name	hsv	chan
+luminance	0	luminance
+red	0	red
+green	0	green
+blue	0	blue
+alpha	0	alpha
+rgbaverage	0	rgbaverage
+average	0	average
+hue	1	red
+saturation	1	green
+value	1	blue
