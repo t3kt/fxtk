@@ -1,0 +1,3 @@
+name	label	low	high
+zerotoone	0..1	0	1
+negtopos	-1..1	-1	1
