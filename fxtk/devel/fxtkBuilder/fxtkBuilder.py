@@ -75,9 +75,15 @@ class _FxtkBuilderImpl(Builder):
 			self.context.removeBuildExcludeOps(library)
 			self.queueCall(continueAction)
 		elif stage == 6:
-			self.finalizeLibraryPars()
+			try:
+				library.op('components').destroy()
+			except:
+				pass
 			self.queueCall(continueAction)
 		elif stage == 7:
+			self.finalizeLibraryPars()
+			self.queueCall(continueAction)
+		elif stage == 8:
 			self.exportLibraryTox()
 			self.context.closeNetworkPane()
 			self.queueCall(thenRun)
