@@ -1,0 +1,3 @@
+name	label	params	chan1	chan2
+cartesian	Cartesian	Horzsource Vertsource Displaceweight[xy] Displaceweightscale	Horzsource	Vertsource
+polar	Polar	Distsource Anglesource Distweight Distoffset Angleweight Angleoffset	Distsource	Anglesource
