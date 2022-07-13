@@ -25,7 +25,7 @@ class FxtkBuilder:
 		name = context.libraryName
 		if not name:
 			return
-		srcTox = context.libraryRootTox
+		srcTox = 'fxtk/src/fxtk.tox'
 		return _FxtkBuilderImpl(
 			log=log,
 			updateStatus=updateStatus,
@@ -70,9 +70,9 @@ class _FxtkBuilderImpl(Builder):
 			self.context.lockBuildLockOps(library)
 			self.queueCall(continueAction)
 		elif stage == 4:
-			self.context.removeBuildExcludeOps(library)
-			self.queueCall(continueAction)
+			self.context.runBuildScript(library.op('tools/BUILD'), continueAction)
 		elif stage == 5:
+			self.context.removeBuildExcludeOps(library)
 			self.queueCall(continueAction)
 		elif stage == 6:
 			self.finalizeLibraryPars()
