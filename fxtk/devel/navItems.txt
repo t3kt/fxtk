@@ -1,0 +1,5 @@
+name	path
+fxtk root	/fxtk
+fxtk tools	/fxtk/tools
+fxtk comps	/fxtk/components
+fxtk ops	/fxtk/operators
