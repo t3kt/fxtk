@@ -70,6 +70,7 @@ class _FxtkBuilderImpl(Builder):
 			self.context.lockBuildLockOps(library)
 			self.queueCall(continueAction)
 		elif stage == 4:
+			self.context.detachTox(library.op('tools'))
 			self.context.runBuildScript(library.op('tools/BUILD'), continueAction)
 		elif stage == 5:
 			self.context.removeBuildExcludeOps(library)
