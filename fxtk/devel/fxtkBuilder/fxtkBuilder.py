@@ -62,6 +62,8 @@ class _FxtkBuilderImpl(Builder):
 		elif stage == 1:
 			# TODO: clear old docs?
 			self._updateLibraryInfo(library)
+			self.context.detachTox(library.op('libraryMeta'))
+			self.context.disableCloning(library.op('libraryMeta'))
 			self.queueCall(continueAction)
 		elif stage == 2:
 			# TODO: update library image?
@@ -102,6 +104,10 @@ class _FxtkBuilderImpl(Builder):
 		self.context.resetCustomPars(comp)
 		# TODO: lock buildLock pars
 
+		for o in comp.findChildren(type=COMP, maxDepth=0):
+			self.context.detachTox(o)
+			self.context.disableCloning(o)
+		iop.libraryTools.UpdateComponentMetadata(comp)
 		# TODO: process sub components
 		# TODO: update op image
 		# TODO: set comp color
