@@ -103,6 +103,9 @@ class _FxtkBuilderImpl(Builder):
 
 	def processCompImpl(self, comp: 'COMP', thenRun: Callable):
 		# TODO: showCustomOnly?
+		meta = comp.op('componentMeta')
+		if meta:
+			self.context.reclone(meta)
 		iop.libraryTools.UpdateComponentMetadata(comp)
 		# TODO: update comp params
 		self._updateComponentParams(comp)
