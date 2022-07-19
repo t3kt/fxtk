@@ -87,6 +87,11 @@ class _FxtkBuilderImpl(Builder):
 			self.finalizeLibraryPars()
 			self.queueCall(continueAction)
 		elif stage == 8:
+			img = library.op('libraryImage')
+			self.context.detachTox(img)
+			self.context.disableCloning(img)
+			library.par.opviewer = './' + img.name
+		elif stage == 9:
 			self.exportLibraryTox()
 			self.context.closeNetworkPane()
 			self.queueCall(thenRun)
