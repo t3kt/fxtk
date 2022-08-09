@@ -91,10 +91,11 @@ class _FxtkBuilderImpl(Builder):
 			self.context.detachTox(img)
 			self.context.disableCloning(img)
 			library.par.opviewer = './' + img.name
+			self.queueCall(continueAction)
 		elif stage == 9:
 			self.exportLibraryTox()
 			self.context.closeNetworkPane()
-			self.queueCall(thenRun)
+			self.queueCall(continueAction)
 		else:
 			self.queueCall(thenRun)
 
