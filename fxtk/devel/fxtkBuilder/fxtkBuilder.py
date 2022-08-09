@@ -66,33 +66,36 @@ class _FxtkBuilderImpl(Builder):
 			self.context.disableCloning(library.op('libraryMeta'))
 			self.queueCall(continueAction)
 		elif stage == 2:
+			self.context.detachTox(library.op('operators'))
+			self.queueCall(continueAction)
+		elif stage == 3:
 			# TODO: update library image?
 			self.processPackages(continueAction)
-		elif stage == 3:
+		elif stage == 4:
 			self.context.lockBuildLockOps(library)
 			self.queueCall(continueAction)
-		elif stage == 4:
+		elif stage == 5:
 			self.context.detachTox(library.op('tools'))
 			self.context.runBuildScript(library.op('tools/BUILD'), continueAction)
-		elif stage == 5:
+		elif stage == 6:
 			self.context.removeBuildExcludeOps(library)
 			self.queueCall(continueAction)
-		elif stage == 6:
+		elif stage == 7:
 			try:
 				library.op('components').destroy()
 			except:
 				pass
 			self.queueCall(continueAction)
-		elif stage == 7:
+		elif stage == 8:
 			self.finalizeLibraryPars()
 			self.queueCall(continueAction)
-		elif stage == 8:
+		elif stage == 9:
 			img = library.op('libraryImage')
 			self.context.detachTox(img)
 			self.context.disableCloning(img)
 			library.par.opviewer = './' + img.name
 			self.queueCall(continueAction)
-		elif stage == 9:
+		elif stage == 10:
 			self.exportLibraryTox()
 			self.context.closeNetworkPane()
 			self.queueCall(continueAction)
@@ -113,12 +116,15 @@ class _FxtkBuilderImpl(Builder):
 		self.context.resetCustomPars(comp)
 		# TODO: lock buildLock pars
 
-		for o in comp.findChildren(type=COMP, maxDepth=0):
+		for o in comp.findChildren(type=COMP, maxDepth=1):
 			self.context.detachTox(o)
 			self.context.disableCloning(o)
 		iop.libraryTools.UpdateComponentMetadata(comp)
 		# TODO: process sub components
 		# TODO: update op image
+		if comp.op('video_out'):
+			comp.par.opviewer = './video_out'
+		comp.viewer = True
 		# TODO: set comp color
 		# TODO: process docs
 
