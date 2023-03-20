@@ -1,9 +1,33 @@
-// https://github.com/minus34/cesium1/blob/master/Cesium/Shaders/Builtin/Functions/luminance.glsl
+// https://github.com/CesiumGS/cesium/blob/master/Source/Shaders/Builtin/Functions/
 float czm_luminance(vec3 rgb)
 {
 	// Algorithm from Chapter 10 of Graphics Shaders.
 	const vec3 W = vec3(0.2125, 0.7154, 0.0721);
 	return dot(rgb, W);
+}
+vec3 czm_saturation(vec3 rgb, float adjustment)
+{
+	// Algorithm from Chapter 16 of OpenGL Shading Language
+	const vec3 W = vec3(0.2125, 0.7154, 0.0721);
+	vec3 intensity = vec3(dot(rgb, W));
+	return mix(intensity, rgb, adjustment);
+}
+// adjustment is in radians
+vec3 czm_hue(vec3 rgb, float adjustment)
+{
+	const mat3 toYIQ = mat3(0.299,     0.587,     0.114,
+	0.595716, -0.274453, -0.321263,
+	0.211456, -0.522591,  0.311135);
+	const mat3 toRGB = mat3(1.0,  0.9563,  0.6210,
+	1.0, -0.2721, -0.6474,
+	1.0, -1.107,   1.7046);
+
+	vec3 yiq = toYIQ * rgb;
+	float hue = atan(yiq.z, yiq.y) + adjustment;
+	float chroma = sqrt(yiq.z * yiq.z + yiq.y * yiq.y);
+
+	vec3 color = vec3(yiq.x, chroma * cos(hue), chroma * sin(hue));
+	return toRGB * color;
 }
 
 // Maximum/minumum elements of a vector
