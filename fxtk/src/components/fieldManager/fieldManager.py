@@ -9,9 +9,6 @@ class FieldManager:
 	def __init__(self, ownerComp: 'COMP'):
 		self.ownerComp = ownerComp
 
-	def _targetTable(self) -> 'DAT':
-		return self.ownerComp.op('targetTable')
-
 	def _host(self) -> 'Optional[COMP]':
 		return self.ownerComp.par.Hostop.eval()
 
@@ -20,7 +17,7 @@ class FieldManager:
 		if not host:
 			return
 		n = int(self.ownerComp.par.Fieldcount)
-		targetTable = self._targetTable()
+		targetTable = self.ownerComp.op('targetTable')  # type: DAT
 		targetNames = ['none']
 		targetLabels = ['None']
 		for r in range(1, targetTable.numRows):
@@ -35,7 +32,7 @@ class FieldManager:
 			if n <= maxPerPage:
 				pageName = 'Fields'
 			else:
-				low = int((i - 1) / maxPerPage) + 1
+				low = (int((i - 1) / maxPerPage) * maxPerPage) + 1
 				pageName = f'Fields {low}-{low + maxPerPage - 1}'
 			page = pagesByName.get(pageName)
 			if not page:
@@ -51,36 +48,38 @@ class FieldManager:
 
 	def buildMappedFieldTable(
 			self, dat: 'DAT',
+			targetTable: 'DAT',
 			fieldSourceTable: 'DAT',
 			fieldTargetTable: 'DAT'):
 		dat.clear()
-		dat.appendRow(['target', 'source', 'dataType'])
+		dat.appendRow(['target', 'source', 'dataType', 'sourceIndex', 'targetParam'])
 		host = self._host()
 		if not host:
 			return
-		targetTable = self._targetTable()
 		if targetTable.numRows < 2 or fieldSourceTable.numRows < 2:
 			return
-		sourcesByTarget = {}
-		for i in range(1, fieldSourceTable.numRows):
-			tgt = fieldTargetTable[i, 'value'].val
+		sourceAndIndexByTarget = {}
+		for i in range(0, fieldSourceTable.numRows):
+			tgt = fieldTargetTable[i, 1].val
 			if tgt == 'none':
 				continue
-			src = op(fieldSourceTable[i, 'value'])
+			src = op(fieldSourceTable[i, 1])
 			if not src:
 				continue
-			if tgt in sourcesByTarget:
+			if tgt in sourceAndIndexByTarget:
 				host.addError(f'Multiple fields assigned to {targetTable[tgt, "label"] or tgt}')
 				continue
-			sourcesByTarget[tgt] = src
+			sourceAndIndexByTarget[tgt] = (src, tdu.digits(fieldSourceTable[i, 0].val))
 		for i in range(1, targetTable.numRows):
 			tgt = targetTable[i, 'name'].val
-			src = sourcesByTarget.get(tgt)
+			src, srcIndex = sourceAndIndexByTarget.get(tgt) or (None, None)
 			src = self._resolveSource(src)
-			if src:
-				dat.appendRow([tgt, src, targetTable[tgt, 'dataType']])
-			else:
-				dat.appendRow([tgt, '', ''])
+			dat.appendRow([
+				tgt,
+				src or '',
+				targetTable[tgt, 'dataType'],
+				srcIndex or '',
+				targetTable[tgt, 'targetParam']])
 
 	def _resolveSource(self, src: 'Optional[OP]') -> 'Optional[OP]':
 		if not src:
