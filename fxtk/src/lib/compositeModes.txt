@@ -1,0 +1,14 @@
+name	label
+add	Add
+atop	Atop
+average	Average
+difference	Difference
+inside	Inside
+maximum	Maximum
+minimum	Minimum
+multiply	Multiply
+outside	Outside
+over	Over
+screen	Screen
+subtract	Subtract
+under	Under
